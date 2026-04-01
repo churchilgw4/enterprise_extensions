@@ -17,7 +17,6 @@ from . import gp_kernels as gpk
 from . import model_orfs
 from . import model_utils
 
-
 __all__ = [
     "white_noise_block",
     "red_noise_block",
@@ -922,6 +921,7 @@ def chromatic_noise_block(
     dt=15,
     df=200,
     idx=4,
+    fref=1400,
     idxmin=0,
     idxmax=7,
     include_quadratic=False,
@@ -1146,10 +1146,12 @@ def chromatic_noise_block(
                 modes=modes,
             )
         else:
+            print(f'Creating the Fourier design matrix with fref = {fref} MHz')
             chm_basis = gpb.createfourierdesignmatrix_chromatic(
                 nmodes=components,
                 Tspan=Tspan,
                 logf=logf,
+                fref=fref,
                 fmin=fmin,
                 fmax=fmax,
                 idx=idx,
