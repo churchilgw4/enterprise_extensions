@@ -155,7 +155,8 @@ def createfourierdesignmatrix_solar_dm(
     Tspan=None,
     logf=True,
     fmin=None,
-    fmax=None,
+    fmax=None, 
+    norm_gp=True, 
 ):
     """
     Construct DM-Solar Model fourier design matrix.
@@ -170,6 +171,8 @@ def createfourierdesignmatrix_solar_dm(
     :param logf: use log frequency spacing
     :param fmin: lower sampling frequency
     :param fmax: upper sampling frequency
+    :param norm_gp : Use other GP-based scaling for SWGP
+                     Overrides Susarla et al. (2024) implementation
 
     :return: F: SW DM-variation fourier design matrix
     :return: f: Sampling frequencies
@@ -182,6 +185,10 @@ def createfourierdesignmatrix_solar_dm(
     theta, R_earth, _, _ = theta_impact(planetssb, sunssb, pos_t)
     dm_sol_wind = dm_solar(1.0, theta, R_earth)
     dt_DM = dm_sol_wind * 4.148808e3 / (freqs**2)
+    if norm_gp:
+        print(f'Normalising the SW Fourier basis as per DMGP')
+        T = Tspan if Tspan is not None else toas.max() - toas.min()
+        dt_DM /= T
 
     return F * dt_DM[:, None], Ffreqs
 
